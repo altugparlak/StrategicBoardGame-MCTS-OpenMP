@@ -23,6 +23,10 @@ Board::Board(const Board& board) {
     total_move_count = board.total_move_count;
 }
 
+string Board::get_winner() const {
+    return winner;
+}
+
 void Board::init_board() {
     for (int row = 0; row < BOARD_SIZE; ++row) {
         for (int col = 0; col < BOARD_SIZE; ++col) {
@@ -37,6 +41,51 @@ void Board::init_board() {
     positions[6][0] = player_2;
     positions[0][6] = player_2;
     positions[2][6] = player_2;
+}
+
+int Board::count_pieces(char player) {
+    int count = 0;
+    for (int row = 0; row < BOARD_SIZE; ++row) {
+        for (int col = 0; col < BOARD_SIZE; ++col) {
+            if (positions[row][col] == player)
+                count++;            
+        }
+    }
+    return count;
+}
+
+bool Board::check_game_state() {
+    int player_1_pieces = count_pieces(player_1);
+    int player_2_pieces = count_pieces(player_2);
+
+    if (total_move_count == TOTAL_MOVE) {
+        if (player_1_pieces == player_2_pieces) {
+            cout << "Draw!" << endl;
+            return true;
+        } else if (player_1_pieces > player_2_pieces) {
+            cout << "Player 1 wins!" << endl;
+            winner = string(1, player_1);
+            return true;
+        } else {
+            cout << "AI wins!" << endl;
+            winner = string(1, player_2);
+            return true;
+        }
+    }
+
+    if (player_1_pieces == 0) {
+        cout << "AI wins!" << endl;
+        winner = string(1, player_2);
+        return true;
+    } else if (player_2_pieces == 0) {
+        cout << "Player 1 wins!" << endl;
+        winner = string(1, player_1);
+        return true;
+    } else if (player_1_pieces == 1 && player_2_pieces == 1) {
+        cout << "Draw!" << endl;
+        return true;
+    }
+    return false;
 }
 
 void Board::print_board() {

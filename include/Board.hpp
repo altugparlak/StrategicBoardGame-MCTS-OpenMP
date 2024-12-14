@@ -3,14 +3,14 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
 #include <string>
-#include <unordered_map>
+#include "UnitTester.hpp"
 
 #define BOARD_SIZE 7
 #define PLAYER_SHAPE 'A'
 #define AI_SHAPE 'O'
 #define DRAW "DRAW"
+#define TOTAL_MOVE 50
 #define MOVE_COUNT_FOR_MANY_PIECE 2
 #define MOVE_COUNT_FOR_ONE_PIECE 1
 
@@ -38,6 +38,7 @@ private:
     char current_turn;
     int move_count;
     int total_move_count;
+    friend class UnitTester;
 
     void init_board();
     void update_the_board();
