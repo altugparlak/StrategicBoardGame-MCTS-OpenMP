@@ -10,6 +10,7 @@ int main(int argc, char* argv[]) {
 
     UnitTester tester;
     //tester.test_check_game_state();
-    tester.test_make_move();
+    //tester.test_make_move();
+    tester.test_update_board();
     return EXIT_SUCCESS;
 }

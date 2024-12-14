@@ -27,6 +27,22 @@ string Board::get_winner() const {
     return winner;
 }
 
+char Board::get_current_turn() const {
+    return current_turn;
+}
+
+int Board::get_move_count() const {
+    return move_count;
+}
+
+int Board::get_total_move_count() const {
+    return total_move_count;
+}
+
+char Board::get_piece(int row, int col) {
+    return positions[row][col];
+}
+
 void Board::init_board() {
     for (int row = 0; row < BOARD_SIZE; ++row) {
         for (int col = 0; col < BOARD_SIZE; ++col) {
@@ -41,10 +57,6 @@ void Board::init_board() {
     positions[6][0] = player_2;
     positions[0][6] = player_2;
     positions[2][6] = player_2;
-}
-
-char Board::get_current_turn() const {
-    return current_turn;
 }
 
 Board Board::make_move(int start_row, int start_col, int end_row, int end_col) {
@@ -66,7 +78,7 @@ Board Board::make_move(int start_row, int start_col, int end_row, int end_col) {
     new_board.positions[start_row][start_col] = empty_square;
     new_board.positions[end_row][end_col] = current_turn;
 
-    //new_board.update_the_board();
+    new_board.update_the_board();
 
     new_board.move_count++;
     new_board.total_move_count = total_move_count + 1;
@@ -78,6 +90,114 @@ Board Board::make_move(int start_row, int start_col, int end_row, int end_col) {
         new_board.move_count = 0;
     }
     return new_board;
+}
+
+void Board::update_the_board() {
+    vector<pair<int, int>> to_removed;
+    check_wall_conditions(to_removed);
+    check_middle_conditions(to_removed);
+
+    for (int i = 0; i < to_removed.size(); i++)
+    {
+        //cout << "Piece location: " << to_removed[i].first << ":" << to_removed[i].second << endl;
+        positions[to_removed[i].first][to_removed[i].second] = empty_square;
+    }
+    
+}
+
+void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
+    // Left Wall
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        if (positions[i][0] != empty_square) {
+            for (int j = 0; j < BOARD_SIZE - 1; j++) {
+                char next_piece = positions[i][j + 1];
+                if (next_piece != positions[i][0] && next_piece != empty_square) {
+                    to_removed.push_back(make_pair(i, 0));
+                }
+                else if (next_piece == positions[i][0]) {
+                    to_removed.push_back(make_pair(i, j + 1));
+                    continue;
+                }
+                else if (next_piece == empty_square) {
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+    }
+
+    // Right Wall
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        if (positions[i][BOARD_SIZE - 1] != empty_square) {
+            for (int j = BOARD_SIZE - 1; j > 0; j--) {
+                char next_piece = positions[i][j - 1];
+                if (next_piece != positions[i][BOARD_SIZE - 1] && next_piece != empty_square) {
+                    to_removed.push_back(make_pair(i, BOARD_SIZE - 1));
+                }
+                else if (next_piece == positions[i][BOARD_SIZE - 1]) {
+                    to_removed.push_back(make_pair(i, j - 1));
+                    continue;
+                }
+                else if (next_piece == empty_square) {
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+    }
+
+    // Top Wall
+    for (int j = 0; j < BOARD_SIZE; j++) {
+        if (positions[0][j] != empty_square) {
+            for (int i = 0; i < BOARD_SIZE - 1; i++) {
+                char next_piece = positions[i + 1][j];
+                if (next_piece != positions[0][j] && next_piece != empty_square) {
+                    to_removed.push_back(make_pair(0, j));
+                }
+                else if (next_piece == positions[0][j]) {
+                    to_removed.push_back(make_pair(i + 1, j));
+                    continue;
+                }
+                else if (next_piece == empty_square) {
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+    }
+
+    // Bottom Wall
+    for (int j = 0; j < BOARD_SIZE; j++) {
+        if (positions[BOARD_SIZE - 1][j] != empty_square) {
+            for (int i = BOARD_SIZE - 1; i > 0; i--) {
+                char next_piece = positions[i - 1][j];
+                if (next_piece != positions[BOARD_SIZE - 1][j] && next_piece != empty_square) {
+                    to_removed.push_back(make_pair(BOARD_SIZE - 1, j));
+                }
+                else if (next_piece == positions[BOARD_SIZE - 1][j]) {
+                    to_removed.push_back(make_pair(i - 1, j));
+                    continue;
+                }
+                else if (next_piece == empty_square) {
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+    }
+}
+
+
+void Board::check_middle_conditions(vector<pair<int, int>>& to_removed) {
+
 }
 
 int Board::count_pieces(char player) {

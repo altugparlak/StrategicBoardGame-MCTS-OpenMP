@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include "UnitTester.hpp"
 
 #define BOARD_SIZE 7
@@ -42,9 +43,10 @@ private:
 
     void init_board();
     void update_the_board();
-    void check_wall_conditions();
-    void check_middle_conditions();
+    void check_wall_conditions(vector<pair<int, int>>& to_removed);
+    void check_middle_conditions(vector<pair<int, int>>& to_removed);
     int count_pieces(char player);
+    char get_piece(int row, int col);
     bool check_game_state();
 };
 
