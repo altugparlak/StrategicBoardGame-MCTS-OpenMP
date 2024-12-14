@@ -43,6 +43,43 @@ void Board::init_board() {
     positions[2][6] = player_2;
 }
 
+char Board::get_current_turn() const {
+    return current_turn;
+}
+
+Board Board::make_move(int start_row, int start_col, int end_row, int end_col) {
+    if (positions[start_row][start_col] != current_turn) {
+        throw invalid_argument("Invalid move: You can only move your own pieces.");
+    }
+    
+    if (positions[end_row][end_col] != empty_square) {
+        throw std::invalid_argument("Invalid move: Destination square is not empty.");
+    }
+
+    int row_diff = abs(start_row - end_row);
+    int col_diff = abs(start_col - end_col);
+    if ((row_diff != 1 && col_diff != 1) || (row_diff == 1 && col_diff == 1)) {
+        throw std::invalid_argument("Invalid move: You can only move one square up, down, left, or right.");
+    }
+
+    Board new_board(*this); // Create a deep copy of the board
+    new_board.positions[start_row][start_col] = empty_square;
+    new_board.positions[end_row][end_col] = current_turn;
+
+    //new_board.update_the_board();
+
+    new_board.move_count++;
+    new_board.total_move_count = total_move_count + 1;
+    
+    if (new_board.count_pieces(new_board.current_turn) > MOVE_COUNT_FOR_ONE_PIECE && new_board.move_count < MOVE_COUNT_FOR_MANY_PIECE) {
+        std::cout << new_board.current_turn << " can make another move with a different piece." << std::endl;
+    } else {
+        new_board.current_turn = (new_board.current_turn == player_1) ? player_2 : player_1;
+        new_board.move_count = 0;
+    }
+    return new_board;
+}
+
 int Board::count_pieces(char player) {
     int count = 0;
     for (int row = 0; row < BOARD_SIZE; ++row) {

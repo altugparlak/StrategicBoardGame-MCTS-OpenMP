@@ -21,6 +21,117 @@ void UnitTester::assert_equal(const string& expected, const string& actual, cons
     }
 }
 
+void UnitTester::test_make_move() {
+    cout << "Testing make_move...\n";
+
+    // Test 1: Valid move
+    {
+        cout << "-------------Test 1-------------" << endl;
+        Board board;
+        board.init_board();
+        int start_row = 0, start_col = 0, end_row = 1, end_col = 0;
+
+        Board new_board = board.make_move(start_row, start_col, end_row, end_col);
+
+        assert_equal(".", string(1, new_board.positions[start_row][start_col]), "Start position should be empty after the move");
+        assert_equal("A", string(1, new_board.positions[end_row][end_col]), "End position should have player's piece");
+        cout << "--------------------------------" << endl;
+    }
+
+    // Test 2: Invalid move (Moving an opponent's piece)
+    {
+        cout << "-------------Test 2-------------" << endl;
+        Board board;
+        board.init_board();
+        int start_row = 5, start_col = 0, end_row = 5, end_col = 1;
+
+        try {
+            // board.positions[start_row][start_col] = board.player_2; // Make opponent's piece in the start position
+            board.make_move(start_row, start_col, end_row, end_col);
+            assert_true(false, "Invalid move: Should have thrown exception for moving opponent's piece");
+        } catch (const invalid_argument& e) {
+            assert_true(true, "Exception caught for moving opponent's piece");
+        }
+        cout << "--------------------------------" << endl;
+    }
+
+    // Test 3: Invalid move (Destination square is not empty)
+    {
+        cout << "-------------Test 3-------------" << endl;
+        Board board;
+        board.init_board();
+        int start_row = 0, start_col = 0, end_row = 0, end_col = 1;
+
+        board.positions[end_row][end_col] = 'A'; // Occupy destination square with a piece
+        try {
+            board.make_move(start_row, start_col, end_row, end_col);
+            assert_true(false, "Invalid move: Should have thrown exception for destination square not empty");
+        } catch (const invalid_argument& e) {
+            assert_true(true, "Exception caught for destination square not empty");
+        }
+        cout << "--------------------------------" << endl;
+    }
+
+    // Test 4: Invalid move (Diagonal move)
+    {
+        cout << "-------------Test 4-------------" << endl;
+        Board board;
+        board.init_board();
+        int start_row = 0, start_col = 0, end_row = 1, end_col = 1;
+
+        try {
+            board.make_move(start_row, start_col, end_row, end_col);
+            assert_true(false, "Invalid move: Should have thrown exception for diagonal move");
+        } catch (const invalid_argument& e) {
+            assert_true(true, "Exception caught for diagonal move");
+        }
+        cout << "--------------------------------" << endl;
+    }
+
+    // Test 5: Invalid move (Moving more than one square)
+    {
+        cout << "-------------Test 5-------------" << endl;
+        Board board;
+        board.init_board();
+        int start_row = 0, start_col = 0, end_row = 0, end_col = 2;
+
+        try {
+            board.make_move(start_row, start_col, end_row, end_col);
+            assert_true(false, "Invalid move: Should have thrown exception for moving more than one square");
+        } catch (const invalid_argument& e) {
+            assert_true(true, "Exception caught for moving more than one square");
+        }
+        cout << "--------------------------------" << endl;
+    }
+
+    // Test 6: Move 2 piece that changes the current turn
+    {
+        cout << "-------------Test 6-------------" << endl;
+        Board board;
+        board.init_board();
+        int start_row = 0, start_col = 0, end_row = 0, end_col = 1;
+        Board new_board = board.make_move(start_row, start_col, end_row, end_col);
+        Board new_board2 = new_board.make_move(end_row, end_col, 0, 2);
+        assert_equal("O", string(1, new_board2.get_current_turn()), "Turn should switch after the move");
+        cout << "--------------------------------" << endl;
+    }
+
+    // Test 7: Checking total move count after the move
+    {
+        cout << "-------------Test 7-------------" << endl;
+        Board board;
+        board.init_board();
+        board.total_move_count = 0;
+        int start_row = 0, start_col = 0, end_row = 0, end_col = 1;
+
+        Board new_board = board.make_move(start_row, start_col, end_row, end_col);
+        assert_equal("1", to_string(new_board.total_move_count), "Total move count should increase by 1");
+        cout << "--------------------------------" << endl;
+    }
+
+    cout << "All tests for make_move completed.\n";
+}
+
 void UnitTester::test_check_game_state() {
     cout << "Testing check_game_state...\n";
 

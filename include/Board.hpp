@@ -21,7 +21,7 @@ public:
     Board();
     Board(const Board& board); // Copy constructor
     
-    void make_move(int start_row, int start_col, int end_row, int end_col);
+    Board make_move(int start_row, int start_col, int end_row, int end_col);
     void print_board();
     
     string get_winner() const;

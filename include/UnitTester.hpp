@@ -10,7 +10,8 @@ class UnitTester {
 public:
     UnitTester();
     void test_check_game_state(); // Method to test check_game_state
-
+    void test_make_move();
+    
 private:
     void assert_equal(const std::string& expected, const std::string& actual, const std::string& message);
     void assert_true(bool condition, const std::string& message);
