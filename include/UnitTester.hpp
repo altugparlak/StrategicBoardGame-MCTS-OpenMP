@@ -11,7 +11,8 @@ public:
     UnitTester();
     void test_check_game_state(); // Method to test check_game_state
     void test_make_move();
-    void test_update_board();
+    void test_wall_conditions_update_board();
+    void test_middle_conditions_update_board();
 
 private:
     void assert_equal(const std::string& expected, const std::string& actual, const std::string& message);

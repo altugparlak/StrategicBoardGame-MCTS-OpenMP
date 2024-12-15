@@ -40,7 +40,10 @@ int Board::get_total_move_count() const {
 }
 
 char Board::get_piece(int row, int col) {
-    return positions[row][col];
+    if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE)
+        return positions[row][col];
+    else
+        return OUT_OF_BOARD;
 }
 
 void Board::init_board() {
@@ -97,8 +100,7 @@ void Board::update_the_board() {
     check_wall_conditions(to_removed);
     check_middle_conditions(to_removed);
 
-    for (int i = 0; i < to_removed.size(); i++)
-    {
+    for (int i = 0; i < to_removed.size(); i++) {
         //cout << "Piece location: " << to_removed[i].first << ":" << to_removed[i].second << endl;
         positions[to_removed[i].first][to_removed[i].second] = empty_square;
     }
@@ -197,7 +199,67 @@ void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
 
 
 void Board::check_middle_conditions(vector<pair<int, int>>& to_removed) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            if (positions[i][j] != empty_square) {
+                char current_piece = positions[i][j];
+                char left_piece = get_piece(i, j - 1);
+                char right_piece = get_piece(i, j + 1);
+                char top_piece = get_piece(i - 1, j);
+                char bottom_piece = get_piece(i + 1, j);
 
+                // Check horizontal condition
+                if (left_piece != OUT_OF_BOARD && right_piece != OUT_OF_BOARD &&
+                left_piece != current_piece && left_piece != empty_square &&
+                left_piece == right_piece)
+                    to_removed.push_back(make_pair(i, j));
+
+                // Check vertical condition
+                if (top_piece != OUT_OF_BOARD && bottom_piece != OUT_OF_BOARD &&
+                top_piece != current_piece && top_piece != empty_square &&
+                top_piece == bottom_piece)
+                    to_removed.push_back(make_pair(i, j));
+            }
+        }
+    }
+
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            if(positions[i][j] != empty_square) {
+                char current_piece = positions[i][j];
+
+                // Check horizontally
+                char left_piece = get_piece(i, j - 1);
+                if (left_piece != OUT_OF_BOARD && left_piece != current_piece) {
+                    int k = j + 1;
+                    while (k < BOARD_SIZE && positions[i][k] == current_piece)
+                        k += 1;
+                    
+                    char right_piece = get_piece(i, k);
+                    if (right_piece == left_piece && right_piece != empty_square) {
+                        // Add all pieces between left_piece and right_piece
+                        for (int x = j; x < k; ++x)
+                            to_removed.push_back(make_pair(i, x));                        
+                    }
+                }
+
+                // Check vertically
+                char top_piece = get_piece(i - 1, j);
+                if (top_piece != OUT_OF_BOARD && top_piece != current_piece) {
+                    int k = i + 1;
+                    while (k < BOARD_SIZE && positions[k][j] == current_piece)
+                        k += 1;
+                    
+                    char bottom_piece = get_piece(k, j);
+                    if (bottom_piece == top_piece && bottom_piece != empty_square) {
+                        // Add all pieces between top_piece and bottom_piece
+                        for (int x = i; x < k; ++x)
+                            to_removed.push_back(make_pair(x, j));                        
+                    }
+                }
+            }
+        }
+    }
 }
 
 int Board::count_pieces(char player) {

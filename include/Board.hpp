@@ -10,6 +10,7 @@
 #define BOARD_SIZE 7
 #define PLAYER_SHAPE 'A'
 #define AI_SHAPE 'O'
+#define OUT_OF_BOARD 'N'
 #define DRAW "DRAW"
 #define TOTAL_MOVE 50
 #define MOVE_COUNT_FOR_MANY_PIECE 2

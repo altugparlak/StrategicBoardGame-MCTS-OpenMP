@@ -132,8 +132,8 @@ void UnitTester::test_make_move() {
     cout << "All tests for make_move completed.\n";
 }
 
-void UnitTester::test_update_board() {
-    cout << "Testing updating board...\n";
+void UnitTester::test_wall_conditions_update_board() {
+    cout << "Testing wall conditions updating board...\n";
 
     // Test 1: Wall conditions (Left Wall one piece)
     {
@@ -148,10 +148,12 @@ void UnitTester::test_update_board() {
         }
         board.positions[0][0] = AI_SHAPE;
         board.positions[0][2] = PLAYER_SHAPE;
+        board.print_board();
         Board new_board = board.make_move(0, 2, 0, 1);
 
         assert_equal(".", string(1, new_board.positions[0][0]), "AI position should be empty after the move");
         assert_equal("A", string(1, new_board.positions[0][1]), "End position should have player's piece");
+        new_board.print_board();
         cout << "--------------------------------" << endl;
     }
 
@@ -169,11 +171,13 @@ void UnitTester::test_update_board() {
         board.positions[0][0] = AI_SHAPE;
         board.positions[0][1] = AI_SHAPE;
         board.positions[0][3] = PLAYER_SHAPE;
+        board.print_board();
         Board new_board = board.make_move(0, 3, 0, 2);
 
         assert_equal(".", string(1, new_board.positions[0][0]), "AI position should be empty after the move");
         assert_equal(".", string(1, new_board.positions[0][1]), "AI position should be empty after the move");
         assert_equal("A", string(1, new_board.positions[0][2]), "End position should have player's piece");
+        new_board.print_board();
         cout << "--------------------------------" << endl;
     }
 
@@ -190,10 +194,12 @@ void UnitTester::test_update_board() {
         }
         board.positions[0][6] = AI_SHAPE;
         board.positions[0][4] = PLAYER_SHAPE;
+        board.print_board();
         Board new_board = board.make_move(0, 4, 0, 5);
 
         assert_equal(".", string(1, new_board.positions[0][6]), "AI position should be empty after the move");
         assert_equal("A", string(1, new_board.positions[0][5]), "End position should have player's piece");
+        new_board.print_board();
         cout << "--------------------------------" << endl;
     }
 
@@ -211,11 +217,13 @@ void UnitTester::test_update_board() {
         board.positions[0][6] = AI_SHAPE;
         board.positions[0][5] = AI_SHAPE;
         board.positions[0][3] = PLAYER_SHAPE;
+        board.print_board();
         Board new_board = board.make_move(0, 3, 0, 4);
 
         assert_equal(".", string(1, new_board.positions[0][6]), "AI position should be empty after the move");
         assert_equal(".", string(1, new_board.positions[0][5]), "AI position should be empty after the move");
         assert_equal("A", string(1, new_board.positions[0][4]), "End position should have player's piece");
+        new_board.print_board();
         cout << "--------------------------------" << endl;
     }
 
@@ -232,10 +240,12 @@ void UnitTester::test_update_board() {
         }
         board.positions[0][0] = AI_SHAPE;
         board.positions[2][0] = PLAYER_SHAPE;
+        board.print_board();
         Board new_board = board.make_move(2, 0, 1, 0);
 
         assert_equal(".", string(1, new_board.positions[0][0]), "AI position should be empty after the move");
         assert_equal("A", string(1, new_board.positions[1][0]), "End position should have player's piece");
+        new_board.print_board();
         cout << "--------------------------------" << endl;
     }
 
@@ -253,11 +263,13 @@ void UnitTester::test_update_board() {
         board.positions[0][0] = AI_SHAPE;
         board.positions[1][0] = AI_SHAPE;
         board.positions[3][0] = PLAYER_SHAPE;
+        board.print_board();
         Board new_board = board.make_move(3, 0, 2, 0);
 
         assert_equal(".", string(1, new_board.positions[0][0]), "AI position should be empty after the move");
         assert_equal(".", string(1, new_board.positions[1][0]), "AI position should be empty after the move");
         assert_equal("A", string(1, new_board.positions[2][0]), "End position should have player's piece");
+        new_board.print_board();
         cout << "--------------------------------" << endl;
     }
 
@@ -274,10 +286,12 @@ void UnitTester::test_update_board() {
         }
         board.positions[6][0] = AI_SHAPE;
         board.positions[4][0] = PLAYER_SHAPE;
+        board.print_board();
         Board new_board = board.make_move(4, 0, 5, 0);
 
         assert_equal(".", string(1, new_board.positions[6][0]), "AI position should be empty after the move");
         assert_equal("A", string(1, new_board.positions[5][0]), "End position should have player's piece");
+        new_board.print_board();
         cout << "--------------------------------" << endl;
     }
 
@@ -295,11 +309,98 @@ void UnitTester::test_update_board() {
         board.positions[6][0] = AI_SHAPE;
         board.positions[5][0] = AI_SHAPE;
         board.positions[3][0] = PLAYER_SHAPE;
+        board.print_board();
         Board new_board = board.make_move(3, 0, 4, 0);
 
         assert_equal(".", string(1, new_board.positions[6][0]), "AI position should be empty after the move");
         assert_equal(".", string(1, new_board.positions[5][0]), "AI position should be empty after the move");
         assert_equal("A", string(1, new_board.positions[4][0]), "End position should have player's piece");
+        new_board.print_board();
+        cout << "--------------------------------" << endl;
+    }
+}
+
+void UnitTester::test_middle_conditions_update_board() {
+    cout << "Testing middle conditions updating board...\n";
+
+    // Test 1: Middle condition (One piece captured)
+    {
+        cout << "-------------Test 1-------------" << endl;
+        Board board;
+        board.init_board();
+
+        for (int i = 0; i < BOARD_SIZE; ++i) {
+            for (int j = 0; j < BOARD_SIZE; ++j) {
+                board.positions[i][j] = '.'; // Clear the board
+            }
+        }
+        board.positions[0][0] = PLAYER_SHAPE;
+        board.positions[4][1] = AI_SHAPE;
+        board.positions[4][3] = AI_SHAPE;
+        board.positions[3][2] = PLAYER_SHAPE;
+        board.print_board();
+        Board new_board = board.make_move(3, 2, 4, 2);
+
+        assert_equal("O", string(1, new_board.positions[4][1]), "AI position should be kept");
+        assert_equal("O", string(1, new_board.positions[4][3]), "AI position should be kept");
+        assert_equal(".", string(1, new_board.positions[3][2]), "Player position should be empty after the move");
+        assert_equal(".", string(1, new_board.positions[4][2]), "Player piece should be captured");
+        new_board.print_board();
+        cout << "--------------------------------" << endl;
+    }
+
+    // Test 2: Middle condition (Two piece captured)
+    {
+        cout << "-------------Test 2-------------" << endl;
+        Board board;
+        board.init_board();
+
+        for (int i = 0; i < BOARD_SIZE; ++i) {
+            for (int j = 0; j < BOARD_SIZE; ++j) {
+                board.positions[i][j] = '.'; // Clear the board
+            }
+        }
+        board.positions[0][0] = AI_SHAPE;
+        board.positions[2][1] = PLAYER_SHAPE;
+        board.positions[2][2] = AI_SHAPE;
+        board.positions[2][3] = AI_SHAPE;
+        board.positions[3][4] = PLAYER_SHAPE;
+        board.print_board();
+        Board new_board = board.make_move(3, 4, 2, 4);
+
+        assert_equal(".", string(1, new_board.positions[2][2]), "AI piece should be captured");
+        assert_equal(".", string(1, new_board.positions[2][3]), "AI piece should be captured");
+        assert_equal(".", string(1, new_board.positions[3][4]), "Player position should be empty after the move");
+        assert_equal("A", string(1, new_board.positions[2][1]), "Player piece should be kept");
+        assert_equal("A", string(1, new_board.positions[2][4]), "Player piece should be kept");
+        new_board.print_board();
+        cout << "--------------------------------" << endl;
+    }
+
+    // Test 3: Middle condition (one piece captured from both of the players)
+    {
+        cout << "-------------Test 3-------------" << endl;
+        Board board;
+        board.init_board();
+
+        for (int i = 0; i < BOARD_SIZE; ++i) {
+            for (int j = 0; j < BOARD_SIZE; ++j) {
+                board.positions[i][j] = '.'; // Clear the board
+            }
+        }
+        board.positions[2][2] = PLAYER_SHAPE;
+        board.positions[2][3] = AI_SHAPE;
+        board.positions[2][5] = AI_SHAPE;
+        board.positions[3][4] = PLAYER_SHAPE;
+        board.print_board();
+        Board new_board = board.make_move(3, 4, 2, 4);
+
+        assert_equal(".", string(1, new_board.positions[2][3]), "AI piece should be captured");
+        assert_equal(".", string(1, new_board.positions[2][4]), "Player piece should be captured");
+        assert_equal("O", string(1, new_board.positions[2][5]), "AI piece should be kept");
+        assert_equal("A", string(1, new_board.positions[2][2]), "Player piece should be kept");
+        assert_equal(".", string(1, new_board.positions[3][4]), "Player position should be empty after the move");
+        new_board.print_board();
         cout << "--------------------------------" << endl;
     }
 }
