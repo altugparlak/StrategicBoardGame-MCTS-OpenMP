@@ -30,7 +30,8 @@ public:
     char get_current_turn() const;
     int get_move_count() const;
     int get_total_move_count() const;
-    
+    bool check_game_state();
+
 private:
     char positions[BOARD_SIZE][BOARD_SIZE];
     char player_1 = PLAYER_SHAPE;
@@ -48,7 +49,7 @@ private:
     void check_middle_conditions(vector<pair<int, int>>& to_removed);
     int count_pieces(char player);
     char get_piece(int row, int col);
-    bool check_game_state();
+
 };
 
 #endif

@@ -63,18 +63,27 @@ void Board::init_board() {
 }
 
 Board Board::make_move(int start_row, int start_col, int end_row, int end_col) {
+    if (start_row < 0 || start_row >= BOARD_SIZE || start_col < 0 || start_col >= BOARD_SIZE ||
+        end_row < 0 || end_row >= BOARD_SIZE || end_col < 0 || end_col >= BOARD_SIZE) {
+        cout << "Invalid move: Coordinates must be between 0 and " << BOARD_SIZE - 1 << "." << endl;
+        return *this;
+    }
+    
     if (positions[start_row][start_col] != current_turn) {
-        throw invalid_argument("Invalid move: You can only move your own pieces.");
+        printf("Invalid move: You can only move your own pieces.\n");
+        return *this;
     }
     
     if (positions[end_row][end_col] != empty_square) {
-        throw std::invalid_argument("Invalid move: Destination square is not empty.");
+        printf("Invalid move: Destination square is not empty.\n");
+        return *this;
     }
 
     int row_diff = abs(start_row - end_row);
     int col_diff = abs(start_col - end_col);
     if ((row_diff != 1 && col_diff != 1) || (row_diff == 1 && col_diff == 1)) {
-        throw std::invalid_argument("Invalid move: You can only move one square up, down, left, or right.");
+        printf("Invalid move: You can only move one square up, down, left, or right.\n");
+        return *this;
     }
 
     Board new_board(*this); // Create a deep copy of the board
@@ -196,7 +205,6 @@ void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
         }
     }
 }
-
 
 void Board::check_middle_conditions(vector<pair<int, int>>& to_removed) {
     for (int i = 0; i < BOARD_SIZE; i++) {
