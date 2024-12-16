@@ -23,7 +23,7 @@ Board::Board(const Board& board) {
     total_move_count = board.total_move_count;
 }
 
-string Board::get_winner() const {
+const string& Board::get_winner() const {
     return winner;
 }
 

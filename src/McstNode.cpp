@@ -9,6 +9,10 @@ McstNode::McstNode(const Board& board, int node_id, char current_turn)
       visit_count(0) {
 }
 
+Board McstNode::get_board() const {
+    return board;
+}
+
 bool McstNode::is_expanded() const {
     return !childs.empty();
 }

@@ -25,8 +25,8 @@ public:
     
     Board make_move(int start_row, int start_col, int end_row, int end_col);
     void print_board();
-    
-    string get_winner() const;
+
+    const string& get_winner() const;
     char get_current_turn() const;
     int get_move_count() const;
     int get_total_move_count() const;
