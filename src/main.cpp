@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <sstream>
 #include <omp.h>
+#include "Mcst.hpp"
 #include "Board.cpp"
 
 using namespace std;
@@ -20,6 +21,37 @@ void DisplayMenu()
 void Game() {
     Board board = Board();
     board.print_board();
+
+    bool running = true;
+    while (running) {
+        char whose_turn = board.get_current_turn();
+        if(whose_turn == PLAYER_SHAPE) {
+            // Player moves
+            int start_row, start_col, end_row, end_col;
+            bool valid_input = false;
+            while (!valid_input) {
+                cout << "Enter move (start_row start_col end_row end_col): ";
+                string input_line;
+                getline(std::cin, input_line);
+
+                istringstream iss(input_line);
+                if (iss >> start_row >> start_col >> end_row >> end_col) {
+                    valid_input = true;
+                } else {
+                    cerr << "Invalid input format! Please enter 4 integers.\n";
+                }
+            }
+            board = board.make_move(start_row, start_col, end_row, end_col);
+
+        }
+        else {
+            // AI Moves
+            cout << "AI is thinking.." << endl;
+            // Implement MCST here
+        }
+        board.print_board();
+        running = !board.check_game_state();
+    }
 }
 
 void MultiplayerGame() {
@@ -28,8 +60,6 @@ void MultiplayerGame() {
 
     bool running = true;
     while (running) {
-        running = !board.check_game_state();
-
         int start_row, start_col, end_row, end_col;
         bool valid_input = false;
 
@@ -48,6 +78,7 @@ void MultiplayerGame() {
 
         board = board.make_move(start_row, start_col, end_row, end_col);
         board.print_board();
+        running = !board.check_game_state();
     }
 }
 
