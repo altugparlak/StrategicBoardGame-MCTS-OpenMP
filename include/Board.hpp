@@ -31,6 +31,8 @@ public:
     int get_move_count() const;
     int get_total_move_count() const;
     bool check_game_state();
+    vector<vector<char>> get_positions() const;
+    char get_piece(int x, int y) const;
 
 private:
     char positions[BOARD_SIZE][BOARD_SIZE];
@@ -48,7 +50,6 @@ private:
     void check_wall_conditions(vector<pair<int, int>>& to_removed);
     void check_middle_conditions(vector<pair<int, int>>& to_removed);
     int count_pieces(char player);
-    char get_piece(int row, int col);
 
 };
 

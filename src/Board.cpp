@@ -39,11 +39,21 @@ int Board::get_total_move_count() const {
     return total_move_count;
 }
 
-char Board::get_piece(int row, int col) {
+char Board::get_piece(int row, int col) const {
     if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE)
         return positions[row][col];
     else
         return OUT_OF_BOARD;
+}
+
+vector<vector<char>> Board::get_positions() const {
+    vector<vector<char>> positions_vector(BOARD_SIZE, vector<char>(BOARD_SIZE));
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            positions_vector[i][j] = positions[i][j];
+        }
+    }
+    return positions_vector;
 }
 
 void Board::init_board() {
@@ -118,15 +128,18 @@ void Board::update_the_board() {
 
 void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
     // Left Wall
+    vector<pair<int, int>> stack_to_remove;
     for (int i = 0; i < BOARD_SIZE; i++) {
         if (positions[i][0] != empty_square) {
             for (int j = 0; j < BOARD_SIZE - 1; j++) {
                 char next_piece = positions[i][j + 1];
                 if (next_piece != positions[i][0] && next_piece != empty_square) {
                     to_removed.push_back(make_pair(i, 0));
+                    for (int n = 0; n < stack_to_remove.size(); n++)
+                        to_removed.push_back(stack_to_remove[n]);                    
                 }
                 else if (next_piece == positions[i][0]) {
-                    to_removed.push_back(make_pair(i, j + 1));
+                    stack_to_remove.push_back(make_pair(i, j + 1));
                     continue;
                 }
                 else if (next_piece == empty_square) {
@@ -138,7 +151,7 @@ void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
             }
         }
     }
-
+    stack_to_remove.clear();
     // Right Wall
     for (int i = 0; i < BOARD_SIZE; i++) {
         if (positions[i][BOARD_SIZE - 1] != empty_square) {
@@ -146,9 +159,11 @@ void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
                 char next_piece = positions[i][j - 1];
                 if (next_piece != positions[i][BOARD_SIZE - 1] && next_piece != empty_square) {
                     to_removed.push_back(make_pair(i, BOARD_SIZE - 1));
+                    for (int n = 0; n < stack_to_remove.size(); n++)
+                        to_removed.push_back(stack_to_remove[n]);
                 }
                 else if (next_piece == positions[i][BOARD_SIZE - 1]) {
-                    to_removed.push_back(make_pair(i, j - 1));
+                    stack_to_remove.push_back(make_pair(i, j - 1));
                     continue;
                 }
                 else if (next_piece == empty_square) {
@@ -160,7 +175,7 @@ void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
             }
         }
     }
-
+    stack_to_remove.clear();
     // Top Wall
     for (int j = 0; j < BOARD_SIZE; j++) {
         if (positions[0][j] != empty_square) {
@@ -168,9 +183,11 @@ void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
                 char next_piece = positions[i + 1][j];
                 if (next_piece != positions[0][j] && next_piece != empty_square) {
                     to_removed.push_back(make_pair(0, j));
+                    for (int n = 0; n < stack_to_remove.size(); n++)
+                        to_removed.push_back(stack_to_remove[n]);
                 }
                 else if (next_piece == positions[0][j]) {
-                    to_removed.push_back(make_pair(i + 1, j));
+                    stack_to_remove.push_back(make_pair(i + 1, j));
                     continue;
                 }
                 else if (next_piece == empty_square) {
@@ -182,7 +199,7 @@ void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
             }
         }
     }
-
+    stack_to_remove.clear();
     // Bottom Wall
     for (int j = 0; j < BOARD_SIZE; j++) {
         if (positions[BOARD_SIZE - 1][j] != empty_square) {
@@ -190,9 +207,11 @@ void Board::check_wall_conditions(vector<pair<int, int>>& to_removed) {
                 char next_piece = positions[i - 1][j];
                 if (next_piece != positions[BOARD_SIZE - 1][j] && next_piece != empty_square) {
                     to_removed.push_back(make_pair(BOARD_SIZE - 1, j));
+                    for (int n = 0; n < stack_to_remove.size(); n++)
+                        to_removed.push_back(stack_to_remove[n]);
                 }
                 else if (next_piece == positions[BOARD_SIZE - 1][j]) {
-                    to_removed.push_back(make_pair(i - 1, j));
+                    stack_to_remove.push_back(make_pair(i - 1, j));
                     continue;
                 }
                 else if (next_piece == empty_square) {
@@ -317,7 +336,8 @@ bool Board::check_game_state() {
 
 void Board::print_board() {
     string turn = (current_turn == PLAYER_SHAPE) ? "Players" : "AI's";
-    cout << "----------------\n" << turn << " turn:\n----------------\n";
+    cout << "----------------\n" << turn << " turn:\n" << "Remaining turns: " <<
+    (50-total_move_count) << "\n----------------\n";
     for (int row = 0; row < BOARD_SIZE; ++row) {
         for (int col = 0; col < BOARD_SIZE; ++col) {
             cout << positions[row][col] << ' ';
