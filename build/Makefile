@@ -8,7 +8,7 @@ OPENMP_LIBRARY_PATH = "$(shell brew --prefix libomp)/lib"
 
 TARGET = main.exe
 
-SRC = ../src/main.cpp ../tester/UnitTester.cpp
+SRC = ../src/main.cpp ../src/Mcst.cpp ../src/McstNode.cpp ../tester/UnitTester.cpp
 INCLUDE_FLAGS = -I$(HEADERS_INCLUDE) -I$(OPENMP_INCLUDE_PATH)
 
 $(TARGET): $(SRC)

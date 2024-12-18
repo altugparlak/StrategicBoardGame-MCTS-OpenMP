@@ -1,8 +1,70 @@
 #include "Mcst.hpp"
 
 Mcst::Mcst(const Board& board) 
-    : root_node(board, 0, board.get_current_turn()) {}
+    : root_node(board, 0, board.get_current_turn()) {
 
+        expand(root_node);
+        //McstNode node = select_child_node(root_node);
+        //node.get_board().print_board();
+    }
+
+McstNode Mcst::select_child_node(const McstNode& root_node) const {
+    vector<McstNode> root_childs = root_node.get_childs();
+
+    if (root_childs.empty()) {
+        throw runtime_error("No child nodes available for selection");
+    }
+
+    int total_visits = 0;
+    for (int i = 0; i < root_childs.size(); i++)
+        total_visits += root_childs[i].get_visit_count();
+
+    cout << "Total visits: " << total_visits << endl; // Debugging line
+
+    McstNode* best_child = nullptr;
+    float best_score = -numeric_limits<float>::infinity();
+
+    for (int i = 0; i < root_childs.size(); i++) {
+        float score = root_childs[i].calculate_ucb(total_visits, 1.41);
+        root_childs[i].set_ucb_score(score);
+        //cout << "Child " << i << " visit count: " << root_childs[i].get_visit_count() << endl;
+        //cout << "Child " << i << " score: " << root_childs[i].get_score() << endl;
+        //cout << "Child " << i << " UCB score: " << score << endl;  // Debugging line
+        if (score > best_score) {
+            best_score = score;
+            best_child = &root_childs[i];
+        }
+    }
+
+    if (!best_child) {
+        throw runtime_error("Failed to select a child node");
+    }
+
+    return *best_child;
+}
+
+void Mcst::expand(McstNode& node) {
+    Board board = node.get_board();
+    vector<tuple<int, int, int, int>> possible_move_coordinates;
+    possible_move_coordinates = get_valid_moves(board, node.get_current_turn());
+
+    int id = node.get_id();
+    for (int i = 0; i < possible_move_coordinates.size(); i++)
+    {
+        tuple<int, int, int, int> move = possible_move_coordinates[i];
+        int start_x = get<0>(move);
+        int start_y = get<1>(move);
+        int end_x = get<2>(move);
+        int end_y = get<3>(move);
+
+        Board new_board = board.make_move(start_x, start_y, end_x, end_y);
+        McstNode new_node = McstNode(new_board, id, new_board.get_current_turn());
+        node.add_child(new_node);
+        //cnew_board.print_board();
+        id++;
+    }
+    
+}
 
 int Mcst::roll_out(McstNode& node) const {
     Board simulation_board = node.get_board();
@@ -21,7 +83,7 @@ int Mcst::roll_out(McstNode& node) const {
 
         simulation_board = simulation_board.make_move(start_x, start_y, end_x, end_y);
     }
-
+    simulation_board.print_board();
     if (simulation_board.get_winner() == string(1, PLAYER_SHAPE)) {
         return -1;
     } else if (simulation_board.get_winner() == string(1, AI_SHAPE)) {

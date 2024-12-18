@@ -19,8 +19,8 @@ private:
     vector<tuple<int, int, int, int>> get_valid_moves(const Board& board, char current_turn) const;
     void expand(McstNode& node);
     int roll_out(McstNode& node) const;
-
     tuple<int, int, int, int> random_choice(const vector<tuple<int, int, int, int>>& moves) const;
+    
 };
 
 #endif

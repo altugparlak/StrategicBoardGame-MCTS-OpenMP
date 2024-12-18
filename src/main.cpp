@@ -48,6 +48,9 @@ void Game() {
             // AI Moves
             cout << "AI is thinking.." << endl;
             // Implement MCST here
+            Mcst mcst = Mcst(board);
+            running = false;
+            break;
         }
         board.print_board();
         running = !board.check_game_state();
@@ -82,6 +85,9 @@ void MultiplayerGame() {
     }
 }
 
+void Test() {
+   
+}
 
 int main(int argc, char* argv[]) {
     //Board board = Board();
@@ -114,6 +120,7 @@ int main(int argc, char* argv[]) {
             break;
         case 4:
             cout << "Test game rules:" << endl;
+            Test();
             break;
         case 5:
             cout << "Exiting the program..." << endl;
