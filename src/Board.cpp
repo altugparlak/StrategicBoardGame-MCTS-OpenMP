@@ -338,7 +338,15 @@ void Board::print_board() {
     string turn = (current_turn == PLAYER_SHAPE) ? "Players" : "AI's";
     cout << "----------------\n" << turn << " turn:\n" << "Remaining turns: " <<
     (50-total_move_count) << "\n----------------\n";
+
+    cout << "  "; 
+    for (int col = 0; col < BOARD_SIZE; ++col) {
+        cout << col << ' ';
+    }
+    cout << '\n';
+
     for (int row = 0; row < BOARD_SIZE; ++row) {
+        cout << row << ' ';
         for (int col = 0; col < BOARD_SIZE; ++col) {
             cout << positions[row][col] << ' ';
         }
