@@ -8,42 +8,85 @@ Mcst::Mcst(const Board& board)
         //node.get_board().print_board();
     }
 
-McstNode Mcst::select_child_node(const McstNode& root_node) const {
-    vector<McstNode> root_childs = root_node.get_childs();
+Board Mcst::play_best_move(int iterations) {
+    for (int i = 0; i < iterations; i++) {
+        McstNode* tempNode = &root_node; // Start with root node
+        vector<McstNode*> searchPath = {tempNode}; // Store pointers to the path
+
+        while (tempNode->is_expanded()) {
+            // Select a child based on UCBScore
+            tempNode = select_child_node(*tempNode);
+            searchPath.push_back(tempNode);
+
+            if (tempNode->get_visit_count() > 0) {
+                expand(*tempNode);
+            }
+        }
+
+        int score_to_be_added = roll_out(*tempNode);
+
+        for (auto node : searchPath) {
+            int updated_score = node->get_score() + score_to_be_added;
+            node->set_score(updated_score);
+            //node->set_score(node->get_score() + score_to_be_added);
+            node->set_visit_count(node->get_visit_count() + 1);
+        }
+    }
+
+    return select_child_node(root_node)->get_board();
+}
+
+McstNode* Mcst::select_child_node(McstNode& root_node) const {
+    vector<McstNode>& root_childs = root_node.get_childs_to_modify();
 
     if (root_childs.empty()) {
         throw runtime_error("No child nodes available for selection");
     }
 
-    int total_visits = 0;
-    for (int i = 0; i < root_childs.size(); i++)
+    //int total_visits = root_node.get_visit_count();
+    /*
+    for (int i = 0; i < root_childs.size(); i++) {
         total_visits += root_childs[i].get_visit_count();
+    }
+    */
+    int total_visits = 0;
+    for (const auto& child : root_childs) {
+        total_visits += child.get_visit_count();
+    }
 
-    cout << "Total visits: " << total_visits << endl; // Debugging line
+    cout << "Total visits: " << total_visits << endl;
 
     McstNode* best_child = nullptr;
     float best_score = -numeric_limits<float>::infinity();
 
-    for (int i = 0; i < root_childs.size(); i++) {
-        float score = root_childs[i].calculate_ucb(total_visits, 1.41);
-        root_childs[i].set_ucb_score(score);
-        //cout << "Child " << i << " visit count: " << root_childs[i].get_visit_count() << endl;
-        //cout << "Child " << i << " score: " << root_childs[i].get_score() << endl;
-        //cout << "Child " << i << " UCB score: " << score << endl;  // Debugging line
-        if (score > best_score) {
-            best_score = score;
-            best_child = &root_childs[i];
+    for (auto& child : root_childs) {
+        float ucb_score = child.calculate_ucb(total_visits, 1.41);
+        child.set_ucb_score(ucb_score);
+
+        if (ucb_score > best_score) {
+            best_score = ucb_score;
+            best_child = &child;
         }
     }
 
+    for (int i = 0; i < root_node.get_childs().size(); i++)
+    {
+        cout << "Child-" << i << " has UCB_score: " << root_node.get_childs()[i].get_ucb_score() <<
+        " -- " << "has score: " << root_node.get_childs()[i].get_score() <<
+        " -- " << "has visit count: " << root_node.get_childs()[i].get_visit_count() << endl;
+    }
+    
+    cout << "Choosen child nodes UCB_score = " << best_child->get_ucb_score() << endl;
     if (!best_child) {
         throw runtime_error("Failed to select a child node");
     }
 
-    return *best_child;
+    return best_child;
 }
 
 void Mcst::expand(McstNode& node) {
+    if(node.is_expanded())
+        return;
     Board board = node.get_board();
     vector<tuple<int, int, int, int>> possible_move_coordinates;
     possible_move_coordinates = get_valid_moves(board, node.get_current_turn());
@@ -83,7 +126,7 @@ int Mcst::roll_out(McstNode& node) const {
 
         simulation_board = simulation_board.make_move(start_x, start_y, end_x, end_y);
     }
-    simulation_board.print_board();
+    //simulation_board.print_board();
     if (simulation_board.get_winner() == string(1, PLAYER_SHAPE)) {
         return -1;
     } else if (simulation_board.get_winner() == string(1, AI_SHAPE)) {

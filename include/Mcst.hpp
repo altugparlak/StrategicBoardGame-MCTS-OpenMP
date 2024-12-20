@@ -15,7 +15,7 @@ public:
 private:
     McstNode root_node;
 
-    McstNode select_child_node(const McstNode& root_node) const;
+    McstNode* select_child_node(McstNode& root_node) const;
     vector<tuple<int, int, int, int>> get_valid_moves(const Board& board, char current_turn) const;
     void expand(McstNode& node);
     int roll_out(McstNode& node) const;

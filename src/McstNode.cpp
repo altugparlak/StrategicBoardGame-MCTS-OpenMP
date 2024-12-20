@@ -50,15 +50,20 @@ void McstNode::add_child(const McstNode& new_child) {
 }
 
 float McstNode::calculate_ucb(int total_visits, float exploration_constant) const {
-    if (get_visit_count() == 0) {
+    if (visit_count == 0) {
         return numeric_limits<float>::infinity(); // Return infinity if the node hasn't been visited yet
     }
     if (total_visits == 0) {
         return numeric_limits<float>::infinity();
     }
-    float average_value = get_score() / get_visit_count();
-    float ucb_score = average_value + exploration_constant * sqrt(log(total_visits) / get_visit_count());
-    return ucb_score;
+    float exploitation = static_cast<float>(score) / visit_count;
+
+    float exploration = exploration_constant * sqrt(log(total_visits) / visit_count);
+    //cout << "Exploitation: " << exploitation 
+    // << ", Exploration: " << exploration 
+    // << ", UCB: " << (exploitation + exploration) << endl;
+
+    return exploitation + exploration;
 }
 
 

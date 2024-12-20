@@ -49,6 +49,8 @@ void Game() {
             cout << "AI is thinking.." << endl;
             // Implement MCST here
             Mcst mcst = Mcst(board);
+            board = mcst.play_best_move(10000);
+            board.print_board();
             running = false;
             break;
         }
