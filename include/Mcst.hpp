@@ -5,12 +5,14 @@
 #include <tuple>
 #include <random>
 #include "McstNode.hpp"
+#include "omp.h"
 
 class Mcst {
 public:
     Mcst(const Board& board);
 
     Board play_best_move(int iterations = 1);
+    Board play_best_move_parallel(int iterations = 1);
 
 private:
     McstNode root_node;

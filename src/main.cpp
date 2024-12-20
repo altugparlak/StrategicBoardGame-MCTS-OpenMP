@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <omp.h>
 #include "Mcst.hpp"
 #include "Board.cpp"
 
@@ -49,10 +48,11 @@ void Game() {
             cout << "AI is thinking.." << endl;
             // Implement MCST here
             Mcst mcst = Mcst(board);
-            board = mcst.play_best_move(10000);
+            //board = mcst.play_best_move(10000);
+            board = mcst.play_best_move_parallel(1000);
             board.print_board();
-            running = false;
-            break;
+            //running = false;
+            //break;
         }
         board.print_board();
         running = !board.check_game_state();

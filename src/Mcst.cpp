@@ -8,10 +8,46 @@ Mcst::Mcst(const Board& board)
         //node.get_board().print_board();
     }
 
+Board Mcst::play_best_move_parallel(int iterations) {
+    vector<McstNode>& root_childs = root_node.get_childs_to_modify();
+
+    int total_visit = 0;
+    omp_set_num_threads(10);
+    #pragma omp parallel for schedule(dynamic) shared(total_visit)
+    for (int i = 0; i < root_childs.size(); i++)
+    {
+        for (int j = 0; j < iterations; j++) {
+            McstNode* tempNode = &root_childs[i];
+            vector<McstNode*> searchPath = {tempNode};
+
+            while (tempNode->is_expanded()) {
+                // Select a child based on UCBScore
+                tempNode = select_child_node(*tempNode);
+                searchPath.push_back(tempNode);
+
+                if (tempNode->get_visit_count() > 0) {
+                    expand(*tempNode);
+                }
+            }
+
+            int score_to_be_added = roll_out(*tempNode);
+
+            for (auto node : searchPath) {
+                int updated_score = node->get_score() + score_to_be_added;
+                node->set_score(updated_score);
+                //node->set_score(node->get_score() + score_to_be_added);
+                node->set_visit_count(node->get_visit_count() + 1);
+            }
+        }
+    }
+
+    return select_child_node(root_node)->get_board();
+}
+
 Board Mcst::play_best_move(int iterations) {
     for (int i = 0; i < iterations; i++) {
-        McstNode* tempNode = &root_node; // Start with root node
-        vector<McstNode*> searchPath = {tempNode}; // Store pointers to the path
+        McstNode* tempNode = &root_node;
+        vector<McstNode*> searchPath = {tempNode};
 
         while (tempNode->is_expanded()) {
             // Select a child based on UCBScore
@@ -75,7 +111,7 @@ McstNode* Mcst::select_child_node(McstNode& root_node) const {
         " -- " << "has score: " << root_node.get_childs()[i].get_score() <<
         " -- " << "has visit count: " << root_node.get_childs()[i].get_visit_count() << endl;
     }
-    
+
     cout << "Choosen child nodes UCB_score = " << best_child->get_ucb_score() << endl;
     if (!best_child) {
         throw runtime_error("Failed to select a child node");
