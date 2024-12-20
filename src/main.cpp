@@ -8,16 +8,18 @@ using namespace std;
 
 void DisplayMenu()
 {
-    cout << "Menu:" << endl;
-    cout << "1." << setw(4) << "Play with AI," << endl;
-    cout << "2." << setw(4) << "Multiplayer," << endl;
-    cout << "3." << setw(4) << "Change difficulty," << endl;
-    cout << "4." << setw(4) << "Test game rules," << endl;
-    cout << "5." << setw(4) << "Exit the program." << endl;
+    using namespace std;
+
+    cout << left;
+    cout << "Menu:\n";
+    cout << "1. " << setw(20) << "Play with AI ☺⚔♝" << endl;
+    cout << "2. " << setw(20) << "Multiplayer ☺⚔☺" << endl;
+    cout << "3. " << setw(20) << "Change difficulty ✎" << endl;
+    cout << "4. " << setw(20) << "Exit the program ☒"  << endl;
     return;
 }
 
-void Game() {
+void Game(int difficulty) {
     Board board = Board();
     board.print_board();
 
@@ -46,13 +48,11 @@ void Game() {
         else {
             // AI Moves
             cout << "AI is thinking.." << endl;
-            // Implement MCST here
             Mcst mcst = Mcst(board);
             //board = mcst.play_best_move(10000);
-            board = mcst.play_best_move_parallel(1000);
+            int simulations = (difficulty == 1) ? 100 : (difficulty == 2) ? 500 : 1000;
+            board = mcst.play_best_move_parallel(simulations);
             board.print_board();
-            //running = false;
-            //break;
         }
         board.print_board();
         running = !board.check_game_state();
@@ -87,13 +87,24 @@ void MultiplayerGame() {
     }
 }
 
-void Test() {
-   
+void ChangeDifficulty(int &dif) {
+    int new_difficulty;
+    cout << "\nSelect difficulty:" << endl;
+    cout << "1. " << setw(4) << "Easy," << endl;
+    cout << "2. " << setw(4) << "Normal," << endl;
+    cout << "3. " << setw(4) << "Hard," << endl;
+
+    cin >> new_difficulty;
+
+    if (new_difficulty >= 1 && new_difficulty <= 3) {
+        dif = new_difficulty;
+        cout << "Difficulty changed to " << ((dif == 1) ? "Easy" : (dif == 2) ? "Normal" : "Hard") << "." << endl;
+    } else {
+        cout << "Invalid input. Difficulty remains unchanged." << endl;
+    }
 }
 
 int main(int argc, char* argv[]) {
-    //Board board = Board();
-    //board.print_board();
 
     //UnitTester tester;
     //tester.test_check_game_state();
@@ -102,29 +113,27 @@ int main(int argc, char* argv[]) {
     //tester.test_middle_conditions_update_board();
 
     int menu_number;
+    int difficulty = 1; // 1(easy) - 2(normal) - 3(hard)
+    cout << "\n(っ◔◡◔)っ Welcome to Strategic Board Game ♗" << endl;
     DisplayMenu();
     cin >> menu_number;
 
-    while (menu_number != 5)
+    while (menu_number != 4)
     {
         switch (menu_number)
         {
         case 1:
             cout << "Game is started." << endl;
-            Game();
+            Game(difficulty);
             break;
         case 2:
             cout << "Multiplayer game started." << endl;
             MultiplayerGame();
             break;
         case 3:
-            cout << "Change difficulty:" << endl;
+            ChangeDifficulty(difficulty);
             break;
         case 4:
-            cout << "Test game rules:" << endl;
-            Test();
-            break;
-        case 5:
             cout << "Exiting the program..." << endl;
             break;
         default:
