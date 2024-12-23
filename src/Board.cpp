@@ -1,9 +1,12 @@
 #include "Board.hpp"
 
-Board::Board() {
+bool Board::debug = false;
+
+Board::Board(bool debug_value) {
     current_turn = AI_SHAPE;
     move_count = 0;
     total_move_count = 0;
+    debug = debug_value;
     init_board();
 }
 
@@ -21,6 +24,11 @@ Board::Board(const Board& board) {
     current_turn = board.current_turn;
     move_count = board.move_count;
     total_move_count = board.total_move_count;
+}
+
+void Board::log(const string& message) {
+    if (debug)
+        cout << message << endl;
 }
 
 const string& Board::get_winner() const {
@@ -75,24 +83,24 @@ void Board::init_board() {
 Board Board::make_move(int start_row, int start_col, int end_row, int end_col) {
     if (start_row < 0 || start_row >= BOARD_SIZE || start_col < 0 || start_col >= BOARD_SIZE ||
         end_row < 0 || end_row >= BOARD_SIZE || end_col < 0 || end_col >= BOARD_SIZE) {
-        cout << "Invalid move: Coordinates must be between 0 and " << BOARD_SIZE - 1 << "." << endl;
+        log("Invalid move: Coordinates must be between 0 and " + to_string(BOARD_SIZE - 1) + ".");
         return *this;
     }
     
     if (positions[start_row][start_col] != current_turn) {
-        printf("Invalid move: You can only move your own pieces.\n");
+        log("Invalid move: You can only move your own pieces.\n");
         return *this;
     }
     
     if (positions[end_row][end_col] != empty_square) {
-        printf("Invalid move: Destination square is not empty.\n");
+        log("Invalid move: Destination square is not empty.\n");
         return *this;
     }
 
     int row_diff = abs(start_row - end_row);
     int col_diff = abs(start_col - end_col);
     if ((row_diff != 1 && col_diff != 1) || (row_diff == 1 && col_diff == 1)) {
-        printf("Invalid move: You can only move one square up, down, left, or right.\n");
+        log("Invalid move: You can only move one square up, down, left, or right.\n");
         return *this;
     }
 
@@ -106,7 +114,7 @@ Board Board::make_move(int start_row, int start_col, int end_row, int end_col) {
     new_board.total_move_count = total_move_count + 1;
     
     if (new_board.count_pieces(new_board.current_turn) > MOVE_COUNT_FOR_ONE_PIECE && new_board.move_count < MOVE_COUNT_FOR_MANY_PIECE) {
-        std::cout << new_board.current_turn << " can make another move with a different piece." << std::endl;
+        log(string(1, new_board.current_turn) + " can make another move with a different piece.");
     } else {
         new_board.current_turn = (new_board.current_turn == player_1) ? player_2 : player_1;
         new_board.move_count = 0;
@@ -306,29 +314,29 @@ bool Board::check_game_state() {
 
     if (total_move_count == TOTAL_MOVE) {
         if (player_1_pieces == player_2_pieces) {
-            cout << "Draw!" << endl;
+            log("Draw!");
             return true;
         } else if (player_1_pieces > player_2_pieces) {
-            cout << "Player 1 wins!" << endl;
+            log("Player 1 wins!");
             winner = string(1, player_1);
             return true;
         } else {
-            cout << "AI wins!" << endl;
+            log("AI wins!");
             winner = string(1, player_2);
             return true;
         }
     }
 
     if (player_1_pieces == 0) {
-        cout << "AI wins!" << endl;
+        log("AI wins!");
         winner = string(1, player_2);
         return true;
     } else if (player_2_pieces == 0) {
-        cout << "Player 1 wins!" << endl;
+        log("Player 1 wins!");
         winner = string(1, player_1);
         return true;
     } else if (player_1_pieces == 1 && player_2_pieces == 1) {
-        cout << "Draw!" << endl;
+        log("Draw!");
         return true;
     }
     return false;

@@ -20,11 +20,12 @@ using namespace std;
 
 class Board {
 public:
-    Board();
+    Board(bool debug = false);
     Board(const Board& board); // Copy constructor
     
     Board make_move(int start_row, int start_col, int end_row, int end_col);
     void print_board();
+    void log(const string& message);
 
     const string& get_winner() const;
     char get_current_turn() const;
@@ -43,6 +44,7 @@ private:
     char current_turn;
     int move_count;
     int total_move_count;
+    static bool debug;
     friend class UnitTester;
 
     void init_board();

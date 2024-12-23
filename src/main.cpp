@@ -19,8 +19,8 @@ void DisplayMenu()
     return;
 }
 
-void Game(int difficulty) {
-    Board board = Board();
+void Game(int difficulty, bool debug_flag) {
+    Board board = Board(debug_flag);
     board.print_board();
 
     bool running = true;
@@ -47,20 +47,20 @@ void Game(int difficulty) {
         }
         else {
             // AI Moves
-            cout << "AI is thinking.." << endl;
+            cout << "\nAI is thinking..\n" << endl;
             Mcst mcst = Mcst(board);
-            //board = mcst.play_best_move(10000);
+            //board = mcst.play_best_move(1000); // Sequential search
             int simulations = (difficulty == 1) ? 100 : (difficulty == 2) ? 1000 : 2000;
             board = mcst.play_best_move_parallel(simulations);
-            board.print_board();
+            // board.print_board();
         }
         board.print_board();
         running = !board.check_game_state();
     }
 }
 
-void MultiplayerGame() {
-    Board board = Board();
+void MultiplayerGame(bool debug_flag) {
+    Board board = Board(debug_flag);
     board.print_board();
 
     bool running = true;
@@ -111,6 +111,20 @@ int main(int argc, char* argv[]) {
     //tester.test_make_move();
     //tester.test_wall_conditions_update_board();
     //tester.test_middle_conditions_update_board();
+    bool debug = false; // Default is false
+
+    if (argc > 1) {
+        string arg = argv[1];
+
+        if (arg == "true") {
+            debug = true;
+        } else if (arg == "false") {
+            debug = false;
+        } else {
+            cerr << "Invalid argument: " << arg << ". Use 'true' or 'false'.\n";
+            return EXIT_FAILURE;
+        }
+    }
 
     int menu_number;
     int difficulty = 1; // 1(easy) - 2(normal) - 3(hard)
@@ -124,11 +138,11 @@ int main(int argc, char* argv[]) {
         {
         case 1:
             cout << "Game is started." << endl;
-            Game(difficulty);
+            Game(difficulty, debug);
             break;
         case 2:
             cout << "Multiplayer game started." << endl;
-            MultiplayerGame();
+            MultiplayerGame(debug);
             break;
         case 3:
             ChangeDifficulty(difficulty);

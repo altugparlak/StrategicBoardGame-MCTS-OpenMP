@@ -90,7 +90,7 @@ McstNode* Mcst::select_child_node(McstNode& root_node) const {
         total_visits += child.get_visit_count();
     }
 
-    cout << "Total visits: " << total_visits << endl;
+    // cout << "Total visits: " << total_visits << endl;
 
     McstNode* best_child = nullptr;
     float best_score = -numeric_limits<float>::infinity();
@@ -107,12 +107,12 @@ McstNode* Mcst::select_child_node(McstNode& root_node) const {
 
     for (int i = 0; i < root_node.get_childs().size(); i++)
     {
-        cout << "Child-" << i << " has UCB_score: " << root_node.get_childs()[i].get_ucb_score() <<
-        " -- " << "has score: " << root_node.get_childs()[i].get_score() <<
-        " -- " << "has visit count: " << root_node.get_childs()[i].get_visit_count() << endl;
+        //cout << "Child-" << i << " has UCB_score: " << root_node.get_childs()[i].get_ucb_score() <<
+        //" -- " << "has score: " << root_node.get_childs()[i].get_score() <<
+        //" -- " << "has visit count: " << root_node.get_childs()[i].get_visit_count() << endl;
     }
 
-    cout << "Choosen child nodes UCB_score = " << best_child->get_ucb_score() << endl;
+    //cout << "Choosen child nodes UCB_score = " << best_child->get_ucb_score() << endl;
     if (!best_child) {
         throw runtime_error("Failed to select a child node");
     }
