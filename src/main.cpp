@@ -50,7 +50,7 @@ void Game(int difficulty) {
             cout << "AI is thinking.." << endl;
             Mcst mcst = Mcst(board);
             //board = mcst.play_best_move(10000);
-            int simulations = (difficulty == 1) ? 100 : (difficulty == 2) ? 500 : 1000;
+            int simulations = (difficulty == 1) ? 100 : (difficulty == 2) ? 1000 : 2000;
             board = mcst.play_best_move_parallel(simulations);
             board.print_board();
         }

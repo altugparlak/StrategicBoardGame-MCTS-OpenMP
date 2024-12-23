@@ -1,7 +1,7 @@
 #include "Board.hpp"
 
 Board::Board() {
-    current_turn = PLAYER_SHAPE;
+    current_turn = AI_SHAPE;
     move_count = 0;
     total_move_count = 0;
     init_board();

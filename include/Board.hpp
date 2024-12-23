@@ -8,8 +8,8 @@
 #include "UnitTester.hpp"
 
 #define BOARD_SIZE 7
-#define PLAYER_SHAPE 'A'
-#define AI_SHAPE 'O'
+#define PLAYER_SHAPE 'O'
+#define AI_SHAPE 'A'
 #define OUT_OF_BOARD 'N'
 #define DRAW "DRAW"
 #define TOTAL_MOVE 50
@@ -36,8 +36,8 @@ public:
 
 private:
     char positions[BOARD_SIZE][BOARD_SIZE];
-    char player_1 = PLAYER_SHAPE;
-    char player_2 = AI_SHAPE;
+    char player_1 = AI_SHAPE;
+    char player_2 = PLAYER_SHAPE;
     string winner = DRAW;
     char empty_square = '.';
     char current_turn;
