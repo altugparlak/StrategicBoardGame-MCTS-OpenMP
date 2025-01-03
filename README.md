@@ -1,8 +1,8 @@
-# StrategicBoardGame-MCST-OpenMP
+# StrategicBoardGame-MCTS-OpenMP
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-This project implements Monte Carlo Search Tree (MCST) using the OpenMP library, aiming to achieve efficient, multithreaded and faster tree search and reinforcement learning operations. It leverages `openmp` for parallel processing.
+This project implements Monte Carlo Tree Search (MCTs) using the OpenMP library, aiming to achieve efficient, multithreaded and faster tree search and reinforcement learning operations. It leverages `openmp` for parallel processing.
 
 ### Built With
 * [![C++][C++-logo]][C++-url]
@@ -54,7 +54,7 @@ OPENMP_LIBRARY_PATH = "$(shell brew --prefix libomp)/lib"
 <!-- RESULTS -->
 ## Results
 ```
-AI performance results is going to be added soon.
+AI performance results are going to be added soon.
 ```
 
 <!-- Badge Images -->
