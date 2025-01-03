@@ -6,6 +6,13 @@
 
 using namespace std;
 
+/**
+ * @class UnitTester
+ * @brief A utility class for testing the functionalities of the Board mechanics.
+ *
+ * This class is intended to be used in a development environment to verify the integrity 
+ * of game logic and algorithms during implementation.
+ */
 class UnitTester {
 public:
     UnitTester();
@@ -19,8 +26,8 @@ public:
     void test_expand();
 
 private:
-    void assert_equal(const std::string& expected, const std::string& actual, const std::string& message);
-    void assert_true(bool condition, const std::string& message);
+    void assert_equal(const string& expected, const string& actual, const string& message);
+    void assert_true(bool condition, const string& message);
 };
 
 #endif

@@ -50,7 +50,9 @@ void Game(int difficulty, bool debug_flag) {
             cout << "\nAI is thinking..\n" << endl;
             Mcst mcst = Mcst(board);
             //board = mcst.play_best_move(1000); // Sequential search
-            int simulations = (difficulty == 1) ? 100 : (difficulty == 2) ? 1000 : 2000;
+            // Difficulties 100, 1000, 2000, 10000 represents the number of iterarions for the
+            // Monte Carlo Search Tree. More iterations -> AI learns better
+            int simulations = (difficulty == 1) ? 100 : (difficulty == 2) ? 1000 : (difficulty == 3) ? 2000 : 10000;
             board = mcst.play_best_move_parallel(simulations);
             // board.print_board();
         }
@@ -86,19 +88,21 @@ void MultiplayerGame(bool debug_flag) {
         running = !board.check_game_state();
     }
 }
-
 void ChangeDifficulty(int &dif) {
     int new_difficulty;
     cout << "\nSelect difficulty:" << endl;
     cout << "1. " << setw(4) << "Easy," << endl;
     cout << "2. " << setw(4) << "Normal," << endl;
     cout << "3. " << setw(4) << "Hard," << endl;
+    cout << "4. " << setw(4) << "Extreme," << endl;
 
     cin >> new_difficulty;
 
-    if (new_difficulty >= 1 && new_difficulty <= 3) {
+    if (new_difficulty >= 1 && new_difficulty <= 4) {
         dif = new_difficulty;
-        cout << "Difficulty changed to " << ((dif == 1) ? "Easy" : (dif == 2) ? "Normal" : "Hard") << "." << endl;
+        cout << "Difficulty changed to " 
+             << ((dif == 1) ? "Easy" : (dif == 2) ? "Normal" : (dif == 3) ? "Hard" : "Extreme") 
+             << "." << endl;
     } else {
         cout << "Invalid input. Difficulty remains unchanged." << endl;
     }

@@ -12,7 +12,8 @@ Board Mcst::play_best_move_parallel(int iterations) {
     vector<McstNode>& root_childs = root_node.get_childs_to_modify();
 
     int total_visit = 0;
-    omp_set_num_threads(10);
+    // number of threads is set to 16 because there can be maximum 16 possible movement
+    omp_set_num_threads(16);
     #pragma omp parallel for schedule(dynamic) shared(total_visit)
     for (int i = 0; i < root_childs.size(); i++)
     {
@@ -76,15 +77,10 @@ McstNode* Mcst::select_child_node(McstNode& root_node) const {
     vector<McstNode>& root_childs = root_node.get_childs_to_modify();
 
     if (root_childs.empty()) {
+        // Root must be expanded first.
         throw runtime_error("No child nodes available for selection");
     }
 
-    //int total_visits = root_node.get_visit_count();
-    /*
-    for (int i = 0; i < root_childs.size(); i++) {
-        total_visits += root_childs[i].get_visit_count();
-    }
-    */
     int total_visits = 0;
     for (const auto& child : root_childs) {
         total_visits += child.get_visit_count();
@@ -163,12 +159,14 @@ int Mcst::roll_out(McstNode& node) const {
         simulation_board = simulation_board.make_move(start_x, start_y, end_x, end_y);
     }
     //simulation_board.print_board();
+
+    // Return scores can be modified.
     if (simulation_board.get_winner() == string(1, PLAYER_SHAPE)) {
-        return -1;
+        return -1; // AI loses
     } else if (simulation_board.get_winner() == string(1, AI_SHAPE)) {
-        return 1;
+        return 1; // AI Wins
     } else {
-        return 0;
+        return 0; // Draw
     }
 }
 
@@ -203,6 +201,7 @@ vector<tuple<int, int, int, int>> Mcst::get_valid_moves(const Board& board, char
 }
 
 std::tuple<int, int, int, int> Mcst::random_choice(const vector<tuple<int, int, int, int>>& moves) const {
+    // Some other random functionality can be used
     int random_choice = rand() % moves.size();
     return moves[random_choice];
 }
