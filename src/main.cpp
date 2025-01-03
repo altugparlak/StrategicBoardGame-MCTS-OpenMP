@@ -1,3 +1,6 @@
+// Instructions are here:
+// https://github.com/altugparlak/StrategicBoardGame-MCTS-OpenMP
+
 #include <iostream>
 #include <iomanip>
 #include <sstream>
